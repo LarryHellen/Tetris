@@ -1,0 +1,2 @@
+language="Java"
+run="javac TetrisProject\src\main\java\Main.java; java TetrisProject\src\main\java\Main"
