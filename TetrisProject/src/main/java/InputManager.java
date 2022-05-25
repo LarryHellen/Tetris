@@ -12,7 +12,7 @@ public class InputManager implements KeyListener{
   public void keyPressed(KeyEvent e){
     if(!gm.gameOver){
       if(e.getKeyCode() == KeyEvent.VK_DOWN){
-        if(!gm.currentBlock.moveDown()){
+        if(!gm.currentBlock.moveDown()){ //If the block can not move down, generate a new block
           gm.generateBlock();
         }
       } else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
@@ -22,7 +22,7 @@ public class InputManager implements KeyListener{
       } else if(e.getKeyCode() == KeyEvent.VK_UP){
         gm.currentBlock.rotate();  
       } else if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE){
-        while(gm.currentBlock.moveDown()){
+        while(gm.currentBlock.moveDown()){ //Bring the block all the way down
           
         }
         gm.generateBlock();

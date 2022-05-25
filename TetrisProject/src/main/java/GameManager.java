@@ -42,6 +42,7 @@ public class GameManager{
     frame.setLayout(grid);
     frame.getContentPane().setBackground(Color.black);
 
+    //Fill the game board with square jpanels that are light grey colored, and adds those panels to panelCoords array
     for(int i = 0; i < maxRows; i++){
       for(int j = 0; j < maxCols; j++){
         JPanel panel = new JPanel();
@@ -56,6 +57,8 @@ public class GameManager{
     updateScore(0);
     
     generateBlock(true);
+
+    //Every second, if the game is not over, move a block down. If a block can not be moved down, generate a new block
 
     Runnable downTick = new Runnable(){
       public void run(){
@@ -78,7 +81,8 @@ public class GameManager{
     if(anyFullRows()){
       clearRows();
     }
-    
+
+    //Randomly select a block and create it on the board at the startCoordinate
     Block oldBlock = currentBlock;
     int r = (int)(Math.random() * 7);
     int[] tempStart = new int[2];
@@ -108,6 +112,7 @@ public class GameManager{
         currentBlock = new YellowO(tempStart,this);
         break;
     }
+    //If the new block is generated over the old block, lose the game. 
     if(!first){
       for(int[] oldCoord : oldBlock.coordinateList){
         for(int[] newCoord : currentBlock.coordinateList){
@@ -118,7 +123,7 @@ public class GameManager{
         }
       }
       if(!gameOver){
-        updateScore(oldBlock.reward / 2);
+        updateScore(oldBlock.reward / 2); //score += 10 - (seconds it took to place block * 2)
       }
     }
 
@@ -128,17 +133,17 @@ public class GameManager{
     generateBlock(false);
   }
 
+  //Iterate through a row and if that row has a gray panel, return false, true otherwise
   public boolean isRowFull(JPanel[] row){
-    boolean isFull = true;
     for(JPanel panel : row){
       if(panel.getBackground() == Color.lightGray){
-        isFull = false;
-        break;
+        return false
       }
     }
-    return isFull;
+    return true;
   }
 
+  //If any of the rows in the entire play grid are full, return true, false otherwise
   public boolean anyFullRows(){
     for(JPanel[] panel : panelCoords){
       if(isRowFull(panel)){
@@ -163,6 +168,7 @@ public class GameManager{
       throw new IllegalArgumentException("rowStartIndex is " + rowStartIndex + ". Must be greater than -1");
     }
 
+    //Check every panel against all panels below that panel. Counter = vertical distance between the panel and the one it's being checked against. If the panel below = gray, move the colored panel down.
     for(int rowIndex = rowStartIndex; rowIndex >= 0; rowIndex--){
       for(int colIndex = 0; colIndex < maxCols; colIndex++){
         int counter = 0;
@@ -178,6 +184,7 @@ public class GameManager{
     }
   }
 
+  //Clear all full rows, +10 points for every row, and +5 multiplier per extra row cleared in one go
   public void clearRows(){
     while(anyFullRows()){
       int multiplier = 0;
@@ -193,6 +200,7 @@ public class GameManager{
     }
   }
 
+  //Delete all blocks, reset all variables that matter
   public void resetGame(){
     while(blockList.size() != 0){
       blockList.remove(0);

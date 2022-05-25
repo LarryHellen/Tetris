@@ -19,144 +19,52 @@ public class Block{
   }
 
   public boolean moveDown(){
-    for(int[] currentPos : coordinateList){
-      if(currentPos[0]+1 > gm.maxRows-1){
-        return false;
-      }
-      boolean notSame = true;
-      for(int[] testPos : coordinateList){
-        if(currentPos[0]+1 == testPos[0] && currentPos[1] == testPos[1])
-          notSame = false;
-      }
-      if(gm.panelCoords[currentPos[0]+1][currentPos[1]].getBackground() != Color.lightGray && notSame){
-        return false;
-      }
-    }
-    ArrayList<int[]> testList = new ArrayList<int[]>();
-    for(int[] coordinateArray : coordinateList){
-      int[] testArray = new int[2];
-      for(int i = 0; i < 2; i++){
-        testArray[i] = coordinateArray[i];
-      }
-      testList.add(testArray);
-    }
-    for(int[] currentPos : coordinateList){
-      boolean check = true;
-      for(int[] testPos : testList){
-        if(testPos[0] + 1 == currentPos[0] && testPos[1] == currentPos[1]){
-          check = false;
-          break;
-        }
-      }
-      if(check){
-        gm.panelCoords[currentPos[0]][currentPos[1]].setBackground(Color.lightGray);
-      }
-      currentPos[0]++;
-      gm.panelCoords[currentPos[0]][currentPos[1]].setBackground(blockColor);
-    }
-    return true;
+    return generalMovement(0,1);
   }
 
   public boolean moveRight(){
-    for(int[] currentPos : coordinateList){
-      if(currentPos[1]+1 > gm.maxCols-1){
-        return false;
-      }
-      boolean notSame = true;
-      for(int[] testPos : coordinateList){
-        if(currentPos[1]+1 == testPos[1] && currentPos[0] == testPos[0])
-          notSame = false;
-      }
-      if(gm.panelCoords[currentPos[0]][currentPos[1]+1].getBackground() != Color.lightGray && notSame){
-        return false;
-      }
-    }
-    ArrayList<int[]> testList = new ArrayList<int[]>();
-    for(int[] coordinateArray : coordinateList){
-      int[] testArray = new int[2];
-      for(int i = 0; i < 2; i++){
-        testArray[i] = coordinateArray[i];
-      }
-      testList.add(testArray);
-    }
-    for(int[] currentPos : coordinateList){
-      boolean check = true;
-      for(int[] testPos : testList){
-        if(testPos[1] + 1 == currentPos[1] && testPos[0] == currentPos[0]){
-          check = false;
-          break;
-        }
-      }
-      if(check){
-        gm.panelCoords[currentPos[0]][currentPos[1]].setBackground(Color.lightGray);
-      }
-      currentPos[1]++;
-      gm.panelCoords[currentPos[0]][currentPos[1]].setBackground(blockColor);
-    }
-    return true;
+    return generalMovement(1,1);
   }
 
   public boolean moveLeft(){
+    return generalMovement(1,-1);
+  }
+
+  public boolean generalMovement(int rowsOrCols, int magnitude){
+    //Create a new array of modified coordinates
+    ArrayList<int[]> newCoordinates = new ArrayList<int[]>();
     for(int[] currentPos : coordinateList){
-      if(currentPos[1]-1 < 0){
-        return false;
-      }
-      boolean notSame = true;
-      for(int[] testPos : coordinateList){
-        if(currentPos[1]-1 == testPos[1] && currentPos[0] == testPos[0])
-          notSame = false;
-      }
-      if(gm.panelCoords[currentPos[0]][currentPos[1]-1].getBackground() != Color.lightGray && notSame){
-        return false;
-      }
-    }
-    ArrayList<int[]> testList = new ArrayList<int[]>();
-    for(int[] coordinateArray : coordinateList){
-      int[] testArray = new int[2];
+      int[] newCoord = new int[2];
       for(int i = 0; i < 2; i++){
-        testArray[i] = coordinateArray[i];
-      }
-      testList.add(testArray);
-    }
-    for(int[] currentPos : coordinateList){
-      boolean check = true;
-      for(int[] testPos : testList){
-        if(testPos[1] - 1 == currentPos[1] && testPos[0] == currentPos[0]){
-          check = false;
-          break;
+        newCoord[i] = currentPos[i];
+        if(i == 1){
+          newCoord[rowsOrCols] += magnitude;
         }
       }
-      if(check){
-        gm.panelCoords[currentPos[0]][currentPos[1]].setBackground(Color.lightGray);
-      }
-      currentPos[1]--;
-      gm.panelCoords[currentPos[0]][currentPos[1]].setBackground(blockColor);
+      newCoordinates.add(newCoord);
     }
-    return true;
+    if(validMovement(newCoordinates)){
+      //Set the old panels to gray
+      for(int[] oldPos : coordinateList){
+        gm.panelCoords[oldPos[0]][oldPos[1]].setBackground(Color.lightGray);
+      }
+      //Replace the old coordiantes with the new coordinates
+      coordinateList = newCoordinates;
+      updateColors();
+      return true;
+    }
+    return false;
   }
 
   public boolean innerRotate(ArrayList<int[]> newCoordinates){
-    for(int[] newPos : newCoordinates){
-      if(newPos[0] > gm.maxRows - 1 || newPos[0] < 0 || newPos[1] < 0 || newPos[1] > gm.maxCols - 1){
-        return false;
+    if(validMovement(newCoordinates)){
+      for(int[] oldPos : coordinateList){
+        gm.panelCoords[oldPos[0]][oldPos[1]].setBackground(Color.lightGray);
       }
-      boolean notSame = true;
-      for(int[] testPos : coordinateList){
-        if(newPos[0] == testPos[0] && newPos[1] == testPos[1]){
-          notSame = false;
-        }
-      }
-      if(gm.panelCoords[newPos[0]][newPos[1]].getBackground() != Color.lightGray && notSame){
-        return false;
-      }
-    }
-    for(int[] oldPos : coordinateList){
-      gm.panelCoords[oldPos[0]][oldPos[1]].setBackground(Color.lightGray);
-    }
-    coordinateList = newCoordinates;
-    updateColors();
-    
-    return true;
+      coordinateList = newCoordinates;
+      updateColors();
+      return true;
+    } return false;
   }
 
   public boolean rotate(){
@@ -168,5 +76,25 @@ public class Block{
       int[] currentPos = coordinateList.get(i);
       gm.panelCoords[currentPos[0]][currentPos[1]].setBackground(blockColor);
     }
+  }
+
+  public boolean validMovement(ArrayList<int[]> newCoordinates){
+    for(int[] newPos : newCoordinates){
+      //Check if the any of the new coordinates are outside the bounds of the play board
+      if(newPos[0] > gm.maxRows - 1 || newPos[0] < 0 || newPos[1] < 0 || newPos[1] > gm.maxCols - 1){
+        return false;
+      }
+      boolean notSame = true;
+      for(int[] testPos : coordinateList){
+        if(newPos[0] == testPos[0] && newPos[1] == testPos[1]){
+          notSame = false;
+        }
+      }
+      //Check if the panel that the new coordinate is in is already occupied, and not by a panel that is a part of this block
+      if(gm.panelCoords[newPos[0]][newPos[1]].getBackground() != Color.lightGray && notSame){
+        return false;
+      }
+    }
+    return true;
   }
 }
