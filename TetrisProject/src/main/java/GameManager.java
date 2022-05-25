@@ -69,7 +69,7 @@ public class GameManager{
     };
 
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-    executor.scheduleAtFixedRate(downTick, 0, 1, TimeUnit.SECONDS);
+    executor.scheduleAtFixedRate(downTick, 1, 1, TimeUnit.SECONDS);
     
   }
 
@@ -180,11 +180,13 @@ public class GameManager{
 
   public void clearRows(){
     while(anyFullRows()){
+      int multiplier = 0;
       for(int rowIndex = maxRows-1; rowIndex > 0; rowIndex--){
         JPanel[] row = panelCoords[rowIndex];
         while(isRowFull(row)){
           emptyRow(row);
-          updateScore(10);
+          updateScore(10+multiplier);
+          multiplier += 5;
           moveColoredPanelsDown(rowIndex - 1);
         }
       }
