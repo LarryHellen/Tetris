@@ -1,3 +1,3 @@
 cd TetrisProject\src\main\java
-javac *.java
+javac Main.java
 java Main
