@@ -137,7 +137,7 @@ public class GameManager{
   public boolean isRowFull(JPanel[] row){
     for(JPanel panel : row){
       if(panel.getBackground() == Color.lightGray){
-        return false
+        return false;
       }
     }
     return true;
