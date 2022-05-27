@@ -112,6 +112,9 @@ public class GameManager{
         currentBlock = new YellowO(tempStart,this);
         break;
     }
+    if(anyFullRows()){
+      clearRows();
+    }
     //If the new block is generated over the old block, lose the game. 
     if(!first){
       for(int[] oldCoord : oldBlock.coordinateList){
